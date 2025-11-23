@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -23,13 +24,12 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $validate['name'],
             'email' => $validate['email'],
-            'password' => $validate['password']
+            'password' => Hash::make($validate['password'])
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = JWTAuth::fromUser($user);
 
         return response()->json([
-            'user' => $user,
             'token' => $token
         ]);
     }
@@ -37,25 +37,24 @@ class AuthController extends Controller
     //Login
     public function login(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $credentials = $request->only('email', 'password');
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+        if (!$token = JWTAuth::attempt($credentials)) {
+            return response()->json(['error', 'Invalid Credentials'], 401);
         }
 
-        $token = $user->createToken('aith_token')->plainTextToken;
+        return response()->json(['token' => $token]);
+    }
 
-        return response()->json([
-            'user' => $user,
-            'token' => $token
-        ]);
+    public function me()
+    {
+        return response()->json(Auth::user());
     }
 
     //Logout
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
-
+        Auth::logout();
         return response()->json(['message' => 'Logged out successfuly']);
     }
 }

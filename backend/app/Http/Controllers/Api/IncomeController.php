@@ -58,8 +58,8 @@ class IncomeController extends Controller
             'title' => 'required|string|max:255',
             'amount' => 'required|numeric',
             'date' => 'required|date',
-            'notes' => 'nllable|string',
-            'category_id' => 'nullable|exists:category,id'
+            'notes' => 'nullable|string',
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
         $income->update($validated);
