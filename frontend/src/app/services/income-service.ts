@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-// import { environment } from '../../environments/environment';
+import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface Income {
   id: number;
@@ -15,33 +16,43 @@ export interface Income {
   created_at: string;
 }
 
+interface ApiResponse<T> {
+  data: T;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class IncomeService {
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private apiUrl = `${environment.apiUrl}/incomes`;
 
   constructor(private http: HttpClient) { }
 
-  // Clean and simple - interceptor handles authentication!
-
-  getIncomes(): Observable<{ data: Income[] }> {
-    return this.http.get<{ data: Income[] }>(this.apiUrl);
+  getIncomes(): Observable<Income[]> {
+    return this.http.get<ApiResponse<Income[]>>(this.apiUrl).pipe(
+      map(response => response.data)
+    );
   }
 
-  getIncome(id: number): Observable<{ data: Income }> {
-    return this.http.get<{ data: Income }>(`${this.apiUrl}/${id}`);
+  getIncome(id: number): Observable<Income> {
+    return this.http.get<ApiResponse<Income>>(`${this.apiUrl}/${id}`).pipe(
+      map(response => response.data)
+    );
   }
 
-  createIncome(income: Partial<Income>): Observable<{ data: Income }> {
-    return this.http.post<{ data: Income }>(this.apiUrl, income);
+  createIncome(income: Partial<Income>): Observable<Income> {
+    return this.http.post<ApiResponse<Income>>(this.apiUrl, income).pipe(
+      map(response => response.data)
+    );
   }
 
-  updateIncome(id: number, income: Partial<Income>): Observable<{ data: Income }> {
-    return this.http.put<{ data: Income }>(`${this.apiUrl}/${id}`, income);
+  updateIncome(id: number, income: Partial<Income>): Observable<Income> {
+    return this.http.put<ApiResponse<Income>>(`${this.apiUrl}/${id}`, income).pipe(
+      map(response => response.data)
+    );
   }
 
-  deleteIncome(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deleteIncome(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

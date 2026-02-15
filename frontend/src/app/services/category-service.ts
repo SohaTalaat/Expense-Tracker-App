@@ -1,8 +1,8 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-// import { environment } from '../../environments/environment';
+import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface Category {
   id: number;
@@ -13,36 +13,43 @@ export interface Category {
   created_at: string;
 }
 
+interface ApiResponse<T> {
+  data: T;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class CategoryService {
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private apiUrl = `${environment.apiUrl}/categories`;
 
   constructor(private http: HttpClient) { }
 
-  // Get all categories - No need to pass headers!
-  getCategories(): Observable<{ data: Category[] }> {
-    return this.http.get<{ data: Category[] }>(this.apiUrl);
+  getCategories(): Observable<Category[]> {
+    return this.http.get<ApiResponse<Category[]>>(this.apiUrl).pipe(
+      map(response => response.data)
+    );
   }
 
-  // Get single category - No need to pass headers!
-  getCategory(id: number): Observable<{ data: Category }> {
-    return this.http.get<{ data: Category }>(`${this.apiUrl}/${id}`);
+  getCategory(id: number): Observable<Category> {
+    return this.http.get<ApiResponse<Category>>(`${this.apiUrl}/${id}`).pipe(
+      map(response => response.data)
+    );
   }
 
-  // Create category - No need to pass headers!
-  createCategory(category: Partial<Category>): Observable<{ data: Category }> {
-    return this.http.post<{ data: Category }>(this.apiUrl, category);
+  createCategory(category: Partial<Category>): Observable<Category> {
+    return this.http.post<ApiResponse<Category>>(this.apiUrl, category).pipe(
+      map(response => response.data)
+    );
   }
 
-  // Update category - No need to pass headers!
-  updateCategory(id: number, category: Partial<Category>): Observable<{ data: Category }> {
-    return this.http.put<{ data: Category }>(`${this.apiUrl}/${id}`, category);
+  updateCategory(id: number, category: Partial<Category>): Observable<Category> {
+    return this.http.put<ApiResponse<Category>>(`${this.apiUrl}/${id}`, category).pipe(
+      map(response => response.data)
+    );
   }
 
-  // Delete category - No need to pass headers!
-  deleteCategory(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deleteCategory(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }
