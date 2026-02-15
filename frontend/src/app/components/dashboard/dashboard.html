@@ -1,0 +1,130 @@
+<div class="dashboard-container">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <h2>💰 Expense Tracker</h2>
+    </div>
+    <div class="navbar-menu">
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >Dashboard</a
+      >
+      <a routerLink="/categories" routerLinkActive="active">Categories</a>
+      <a routerLink="/expenses" routerLinkActive="active">Expenses</a>
+      <a routerLink="/incomes" routerLinkActive="active">Incomes</a>
+    </div>
+    <div class="navbar-user">
+      @if (authService.currentUser(); as user) {
+        <span class="user-name">👤 {{ user.name }}</span>
+      }
+      <button (click)="logout()" class="btn-logout">Logout</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    @if (isLoading()) {
+      <div class="loading-container">
+        <div class="spinner-large"></div>
+        <p>Loading dashboard...</p>
+      </div>
+    } @else {
+      <div class="welcome-section">
+        <h1>Welcome back, {{ authService.currentUser()?.name }}! 👋</h1>
+        <p>Here's your expense tracking dashboard</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card income">
+          <div class="stat-icon">💰</div>
+          <div class="stat-info">
+            <h3>Total Income</h3>
+            <p class="stat-value">${{ totalIncome().toFixed(2) }}</p>
+          </div>
+        </div>
+
+        <div class="stat-card expense">
+          <div class="stat-icon">💸</div>
+          <div class="stat-info">
+            <h3>Total Expenses</h3>
+            <p class="stat-value">${{ totalExpenses().toFixed(2) }}</p>
+          </div>
+        </div>
+
+        <div class="stat-card balance" [class.negative]="balance() < 0">
+          <div class="stat-icon">📊</div>
+          <div class="stat-info">
+            <h3>Balance</h3>
+            <p class="stat-value">${{ balance().toFixed(2) }}</p>
+          </div>
+        </div>
+
+        <div class="stat-card categories">
+          <div class="stat-icon">📁</div>
+          <div class="stat-info">
+            <h3>Categories</h3>
+            <p class="stat-value">{{ categoryCount() }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="actions-grid">
+          <button routerLink="/expenses" class="action-btn">
+            <span class="action-icon">➕</span>
+            <span>Add Expense</span>
+          </button>
+          <button routerLink="/incomes" class="action-btn">
+            <span class="action-icon">💵</span>
+            <span>Add Income</span>
+          </button>
+          <button routerLink="/categories" class="action-btn">
+            <span class="action-icon">📂</span>
+            <span>Manage Categories</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="recent-transactions">
+        <div class="recent-section">
+          <h2>Recent Expenses</h2>
+          @if (recentExpenses().length > 0) {
+            <div class="transaction-list">
+              @for (expense of recentExpenses(); track expense.id) {
+                <div class="transaction-item expense">
+                  <div class="transaction-info">
+                    <h4>{{ expense.title }}</h4>
+                    <p>{{ expense.date }}</p>
+                  </div>
+                  <div class="transaction-amount">-${{ expense.amount }}</div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="no-data">No expenses yet</p>
+          }
+        </div>
+
+        <div class="recent-section">
+          <h2>Recent Incomes</h2>
+          @if (recentIncomes().length > 0) {
+            <div class="transaction-list">
+              @for (income of recentIncomes(); track income.id) {
+                <div class="transaction-item income">
+                  <div class="transaction-info">
+                    <h4>{{ income.title }}</h4>
+                    <p>{{ income.date }}</p>
+                  </div>
+                  <div class="transaction-amount">+${{ income.amount }}</div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="no-data">No incomes yet</p>
+          }
+        </div>
+      </div>
+    }
+  </main>
+</div>
