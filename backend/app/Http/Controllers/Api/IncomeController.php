@@ -74,6 +74,6 @@ class IncomeController extends Controller
         $income = Income::where('user_id', Auth::id())->findOrFail($id);
         $income->delete();
 
-        return response()->json(['message', 'Income Deleted Successfully']);
+        return response()->json(['message' => 'Income Deleted Successfully']);
     }
 }

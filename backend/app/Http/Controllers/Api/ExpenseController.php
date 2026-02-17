@@ -26,8 +26,8 @@ class ExpenseController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'amount' => 'sometimes|numeric',
-            'date' => 'sometimes|string',
+            'amount' => 'required|numeric|min:0',
+            'date' => 'required|date',
             'notes' => 'nullable|string',
             'category_id' => 'nullable|exists:categories,id'
         ]);
@@ -72,6 +72,6 @@ class ExpenseController extends Controller
     {
         $expense = Expense::where('user_id', Auth::id())->findOrFail($id);
         $expense->delete();
-        return response()->json(['message', 'Expense Delted Successfully']);
+        return response()->json(['message' => 'Expense Delted Successfully']);
     }
 }
