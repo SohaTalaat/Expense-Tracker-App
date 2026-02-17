@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Expense;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 
@@ -17,8 +17,8 @@ class ExpenseSeeder extends Seeder
     public function run(): void
     {
         $user = User::first();
-        $categories = Category::all();
-        $titles = ['Salary', 'Freelance Project', 'Gift', 'Bonus', 'Investment Return'];
+        $categories = Category::where('type', 'expense')->get();
+        $titles = ['Grocery Shopping', 'Bus Fare', 'Restaurant Bill', 'Electricity Bill', 'Doctor Visit'];
 
 
         foreach ($categories as $category) {

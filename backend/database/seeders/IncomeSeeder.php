@@ -16,8 +16,7 @@ class IncomeSeeder extends Seeder
     public function run(): void
     {
         $user = User::first();
-        $categories = Category::all();
-
+        $categories = Category::where('type', 'expense')->get();
         $titles = ['Salary', 'Freelance Project', 'Gift', 'Bonus', 'Investment Return'];
 
         foreach (range(1, 10) as $i) {

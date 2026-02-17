@@ -1,7 +1,9 @@
+import { environment } from './../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+
 
 export interface User {
   id: number;
@@ -33,7 +35,7 @@ export interface RegisterData {
 })
 export class AuthService {
 
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private apiUrl = environment.apiUrl;
   private tokenKey = 'auth_token';
 
   currentUser = signal<User | null>(null);
